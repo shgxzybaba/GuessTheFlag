@@ -8,60 +8,52 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Spain", "UK", "Ukraine", "US"].shuffled()
     
-    @State private var showingAlert = false
+    @State private var correctAnswer = Int.random(in: 0...2)
+    
+    @State private var showingScore = false
+    @State private var scoreTitle = ""
+    
     
     var body: some View {
         
         ZStack {
-            LinearGradient(colors: [.gray, .black], startPoint: .top, endPoint: .bottom)
+            Color.blue
                 .ignoresSafeArea()
-            
-            VStack(spacing: 15) {
-                Button("Button 1") {
-                    showingAlert = true
-                }.alert("Important Message", isPresented: $showingAlert) {
-                    Button("OK") {
-                    }
-                    Button("Cancel") {
-                    }
-                } message: {
-                    Text("This is an important message")
+            VStack(spacing: 30) {
+                VStack {
+                    Text("Tap the flag of")
+                    Text(countries[correctAnswer])
                 }
+                .foregroundColor(.white)
                 
-                .buttonStyle(.bordered)
-                Button("Button 2", role: .destructive) { }
-                    .buttonStyle(.bordered)
-                Button("Button 3") { }
-                    .buttonStyle(.borderedProminent)
-                Button("Button 4", role: .destructive) { }
-                    .buttonStyle(.borderedProminent)
-                Button {
-                    print("Button was tapped")
-                } label: {
-                    Text("Tap me!")
-                        .padding()
-                        .foregroundStyle(.white.gradient)
-                        .background(.red.gradient)
-                }
-                Button {
-                    print("Edit button was tapped")
-                } label: {
-                    HStack {
-                        Image(systemName: "pencil")
-                        Text("Edit me!")
-                            .foregroundColor(.white)
+                ForEach(0..<3) { index in
+                    Button {
+                        flagTapped(index)
+                    }label: {
+                        Image(countries[index])
                     }
-                    .padding()
                 }
-                .buttonStyle(.bordered)
             }
-            Spacer()
-            Spacer()
-            
+        }.alert(scoreTitle, isPresented: $showingScore) {
+            Button("Continue", action: askQuestion)
         }
+    }
+    
+    func flagTapped(_ number: Int) {
+        if number == correctAnswer {
+            scoreTitle = "Correct! 🤩"
+        }else {
+            scoreTitle = "Wrong! 😢"
+        }
+        showingScore = true
         
-        
+    }
+    
+    func askQuestion() {
+        countries.shuffle()
+        correctAnswer = Int.random(in: 0...2)
     }
     
 }
